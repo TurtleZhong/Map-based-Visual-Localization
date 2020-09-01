@@ -3,6 +3,9 @@ A general framework for map-based visual localization. It contains 1) Map Genera
 
 I will release some related papers and An introduction of the work in the map based visual localization. I guess the introduction will writen in Chinese first. So coming soon, Let's do it.
 
+# **随缘持续更新中!!**
+
+![progress](https://img.shields.io/badge/progress-20%25-brightgreen) ![star](https://img.shields.io/badge/Star%20me-if%20it%20helps%20you%EF%BC%81-green.svg)
 
 [TOC]
 
