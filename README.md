@@ -4,7 +4,7 @@ A general framework for map-based visual localization. It contains 1) Map Genera
 I will release some related papers and An introduction of the work in the map based visual localization. I guess the introduction will writen in Chinese first. So coming soon, Let's do it.
 
 
-[toc]
+[TOC]
 
 ## 基于地图的视觉定位
 基于已知地图的视觉定位是一个比较大的问题，基本上会涉及到
@@ -20,6 +20,21 @@ b）不会涉及到太多公式细节，尽量写成白话文，且大多数东�
 c）会有这个项目的一些框架图，以及效果图，应该会对想涉足这个领域的有帮助；
 
 d）会涉及到slam系统，重定位，图像检索，特征点提取及匹配，多传感器融合领域。
+
+主要做了以下方面的一些工作，但也并不是说拿来就能用，并且全部东西都脚本化的。
+a）基本上支持绝大部分SLAM系统的输出轨迹进行视觉地图构建，当然这是离线的，一方面，有些slam系统的历史轨迹是会经过优化的，所以这部分是拿最终的轨迹和图像来进行离线选择pose和image进行SFM构建地图的；
+
+b）支持传统特征如SIFT以及深度学习特征如SuperPoint等众多特征的地图构建，但问题在于轨迹的来源是各式各样的，我甚至可以使用rtk或者激光雷达作为真值，但实际重定位使用的时候必须要使用与构建视觉地图的特征一致，不然是会定位失败的；
+
+c）整个框架在线定位基本基于C++开发，可以方便集成到ROS，所以也许会提供一个提取深度学习特征点和描述子网络，模型本身不会修改，只是改成cpp版本，便于后续开发，不然ros的python2环境和现在各大网络的python3环境很烦；
+
+d）将SFM重建之后的元素分解整合成视觉定位所依赖的元素，譬如关键帧，特征点，描述子，3D点等等；
+
+e）一个可以兼容传统特征和深度学习特征的重定位框架，之所以叫重定位，是因为基于b步骤的地图定位的，另外本质上确实也是重定位过程；
+
+f）一个理论上可以融合imu， wheel encoder等其它传感器的融合思路或者说方案。之所以要是因为当你机器人走到了没有视觉地图的地方怎么办呢，对吧。
+
+g）代码不一定开源，但会提供思路，会提供相关论文，这些应该只要追了近几年的论文很容易想到，也有很多论文是这么干的，我只是做了一点微小的工作。
 
 ### 1.历年slam系统总结与思考
 玩视觉slam的小伙伴想必都跑过各种vo，vio，slam系统，至少下面的一款你肯定玩过的ORB-SLAM，SVO，DSO，VINS-Mono，MSCKF，Kimera等等。下面先简单总结一下历年来slam系统的对比，对比如下表
