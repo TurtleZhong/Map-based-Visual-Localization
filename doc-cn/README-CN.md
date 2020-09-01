@@ -1,9 +1,3 @@
-# Map-based-Visual-Localization
-A general framework for map-based visual localization. It contains 1) Map Generation which support traditional features or deeplearning features. 2) Hierarchical-Localizationvisual in visual(points or line) map. 3)Fusion framework with IMU, wheel odom and GPS sensors.
-
-I will release some related papers and An introduction of the work in the map based visual localization. I guess the introduction will writen in Chinese first. So coming soon, Let's do it.
-
-
 [toc]
 
 ## 基于地图的视觉定位
@@ -57,7 +51,7 @@ ok 如果这些还不够，那么可以参考吴同学的 [83 项开源视觉 SL
 想必这个应该是最基础的，玩过的同学至少先能在数据集上跑通，跑通之后大多也都会买一个双目imu相机或者rgbd相机等等，用kalibr标定自己的相机，然后修改配置文件，不出意外的话，你拿着相机不断的动，相机的轨迹就会显示在屏幕上。ok，到这应该大家都是这么过来的。
 ![kitti-slam-demo](../images/kitti-slam-demo.gif)
 <p align="center">
-  <a href=""><img src="images/kitti-slam-demo.gif" width="90%"/></a>
+  <a href=""><img src="../images/kitti-slam-demo.gif" width="90%"/></a>
 </p>
 </details>
 
