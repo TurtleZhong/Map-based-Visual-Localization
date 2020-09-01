@@ -13,6 +13,11 @@ I will release some related papers and An introduction of the work in the map ba
 
 # **随缘持续更新中!!**
 
+<p align="left">
+  <a href="https://github.com/TurtleZhong/Map-based-Visual-Localization/wiki"><img src="https://img.shields.io/badge/wiki-click%20here-brightgreen" width="20%"/></a>
+</p>
+
+
 ![progress](https://img.shields.io/badge/progress-20%25-brightgreen) ![star](https://img.shields.io/badge/Star%20me-if%20it%20helps%20you%EF%BC%81-green.svg)
 
 [TOC]
