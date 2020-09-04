@@ -20,6 +20,8 @@ I will release some related papers and An introduction of the work in the map ba
 
 ![progress](https://img.shields.io/badge/progress-20%25-brightgreen) ![star](https://img.shields.io/badge/Star%20me-if%20it%20helps%20you%EF%BC%81-green.svg)
 
+- 2020.09.04 添加文章结构
+
 [TOC]
 
 ## 基于地图的视觉定位
@@ -132,3 +134,13 @@ ok 如果这些还不够，那么可以参考吴同学的 [83 项开源视觉 SL
 * g）基于已知地图的视觉定位能用来干什么？
 
 #### 1.3 文章结构
+
+基本上来讲文章是针对已知视觉地图的定位方法，端到端的算法当然也能做定位，但本文还是将视觉定位拆开几个部分来讲。首先会确定整个定位框架的脉络，其次从如何构建稀疏特征点视觉地图，地图都可以包含哪些有用的元素以及图像检索，局部定位等等方向来讲解，最后从当前热门计算机视觉的方向怎么集成或者说提取一些对定位信息有帮助的元素来提高定位精度。
+
+### 2. 基于地图的视觉定位框架
+
+* TODO 这里提供相关的论文参考
+
+开局一张图，剩下全靠编，那整体上来说就以这个图作为行文的框架。
+
+* TODO add whole picture image.
