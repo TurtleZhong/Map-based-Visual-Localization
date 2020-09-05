@@ -1,5 +1,9 @@
 # Map-based-Visual-Localization
 
+<p align="center">
+  <a href=""><img src="images/whole_structure.gif" width="100%"/></a>
+</p>
+
 
 A general framework for map-based visual localization. It contains
 
@@ -143,4 +147,7 @@ ok 如果这些还不够，那么可以参考吴同学的 [83 项开源视觉 SL
 
 开局一张图，剩下全靠编，那整体上来说就以这个图作为行文的框架。
 
-* TODO add whole picture image.
+<p align="center">
+  <a href=""><img src="images/whole_structure.gif" width="100%"/></a>
+</p>
+
