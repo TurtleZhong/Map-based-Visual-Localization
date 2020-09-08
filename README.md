@@ -143,7 +143,17 @@ ok 如果这些还不够，那么可以参考吴同学的 [83 项开源视觉 SL
 
 ### 2. 基于地图的视觉定位框架
 
-* TODO 这里提供相关的论文参考
+**!!这里暂时只提供一些相关的论文，暂时不做分类!!**
+
+[DH3D: Deep Hierarchical 3D Descriptors for Robust Large-Scale 6DOF Relocalization](https://github.com/JuanDuGit/DH3D)
+
+[hfnet]()
+
+[hloc]()
+
+[netvlad]()
+
+
 
 开局一张图，剩下全靠编，那整体上来说就以这个图作为行文的框架。
 
@@ -151,3 +161,9 @@ ok 如果这些还不够，那么可以参考吴同学的 [83 项开源视觉 SL
   <a href=""><img src="images/whole_structure.gif" width="100%"/></a>
 </p>
 
+事实上，这里也已经很明显了，整体来看有三个大块：
+- **Mapping**
+- **Localization**
+- **Fusion**
+
+这里的每一大快都是一块非常大的话题，我们就从这张图来分析整个流程，首先看图的上半部分
