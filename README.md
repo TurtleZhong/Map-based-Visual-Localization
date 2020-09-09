@@ -179,6 +179,7 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
 * [Contextdesc](https://github.com/lzx551402/contextdesc)
 * [LFNet](https://github.com/vcg-uvic/lf-net-release)
 * [R2D2](https://github.com/naver/r2d2)
+* [ASLFeat](https://arxiv.org/abs/2003.10071)
 
 &emsp;&emsp;当有了图像，有了图像的pose之后，剩下的过程便是建图，建图又可分为在线建图和离线建图，在线建图可以使用文章开篇提到的各种slam方法，我们这里主要注重离线建图，为什么要离线建图呢？离线建图有它的优势，最终要的是获取到的图像和pose是可以人为控制的，也就意味着在精度方面有一个基本保障，这也是大多数基于激光雷达定位方法的方式，只不过地图换成了视觉地图。离线建图即恢复出2D特征点的3D位置，最小化到一个三角化算法的过程，最后整体做BA，关于三角化原理可以参考我之前写的[博客](http://www.xinliang-zhong.vip/vins_notes/#%E9%99%84%E5%BD%95c-%E4%B8%89%E8%A7%92%E5%8C%96).
 
@@ -208,6 +209,42 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
 
 ### 3. 基于地图的视觉定位框架-视觉地图元素
 
+&emsp;&emsp;建图的主要目标是构建一个描述周围环境的模型。生成的图具有多方面的作用：1）可以为使用者提供能够理解的地图参考，2）为机器人任务提供环境信息，如导航规划等 3）限制里程计的误差发散 4）作为先验模型为全局定位提供参考。[这里参考了一个survey](https://zhuanlan.zhihu.com/p/152754491).
+
+&emsp;&emsp;所谓的视觉地图可以分为很多种类，根据模型的输出以及地图的表达元素，可以将地图分为:几何建图（Geometric Mapping），语义建图（Semantic Mapping）和广义建图（General Mapping）,几何建图主要提取场景的形状和结构描述。用于场景表达的普遍选择包括深度（2.5D）、体素（Voxel）、点（Point)和网络（Mesh)， 语义建图则更加注重对环境的理解，如物体的类别，等等，这是一个比较高层次的地图，而语义地图又可以使用语义分割（Semantic Segmentation）、实例分割(Instance Segmentation)和全景分割（Panoptic Segmentation)来进行语义建图。当然在深度学习的极力推动下，也有一些更高层次的地图表达方式，类似于拓扑地图一样可以称作为广义地图，可以将地图搞成（Autoencoder）压缩场景、神经渲染模型（Neural rendering model）以及任务驱动的地图（Task-driven map)。
+
+&emsp;&emsp;就这个项目来讲，我们重点关注几何地图中的稀疏点特征地图，以ORB-SLAM2为例子，我们来看一下如果一张稀疏特征点视觉地图如果用于定位，它需要哪些元素。<br/>
+&emsp;&emsp;在ORB-SLAM2的System.h文件中，有这样一句话：
+ ```c++
+// TODO: Save/Load functions.
+ ```
+ 其目的是让读者自己实现地图的保存与加载功能，事实上这也是大多数SLAM/VO/VIO系统的问题，你想保存地图？那是不可能的。这个保存地图其实在16年就已经有人写出来了，并且我们当时也使用过，现在github上也有很多版本，这里给大家推荐两个版本：<br/>
+ - [ORB-SLAM2保存地图版本1](https://github.com/TUMFTM/orbslam-map-saving-extension)
+ - [ORB-SLAM2保存地图版本2](https://github.com/PWN0N/ORBSLAM_MapSave)<br/>
+ 
+言归正传，我们来看一下作为一个通用的稀疏特征点视觉地图，它包含哪些元素：
+
+- <font color=lightgreen >关键帧</font>，包含关键帧的数目，当前关键帧的ID，父节点的ID，关键帧的生长树，关键帧的位姿，关键帧特征点位置，描述子，对应与3D地图点的索引ID，BOW向量等等元素
+- <font color=lightgreen >3D地图点</font>，地图点的数目，地图点的位置，地图点的其他信息（譬如语义等）
+- <font color=lightgreen >关键帧与3D地图点的对应关系</font>，也就是刚刚上面说到的对应索引。
+
+假设保存了这些元素之后，我们试想来了新的一帧之后，怎么去重定位出当前帧的位姿，首先对新来的帧提取局部特征点和局部描述子，然后根据局部特征计算出BOW向量，用当前帧BOW向量计算出与地图中最接近的关键帧(visual place recognition)，这时候会有候选帧，事实上如果场景变化不大，那么你已经做出了一个精度为m级别的粗略定位了，因为关键帧是保存了位姿的，所以候选关键帧和当前帧的几何信息是接近的，故它两的pose也会很接近。其次最粗暴的方法就是与最像的关键帧先做2D-2D的特征匹配，然后关键帧的特征点有些是带有3D地图点的，所以一系列的outlier剔除之后你可以得到一群2D-3D的匹配，然后粗暴的PnP方法就可以计算出当前帧的位姿。总结其过程主要有两个步骤：
+- <font color=lightgreen >1:粗定位/图像重识别/图像检索</font>，根据几何信息判断出最相似的场景。
+- <font color=lightgreen >2.精定位/PnP/BA</font>，根据2D-3D匹配恢复出相机位姿。
+
+所以我们可以将地图元素像这样存放，当然你也可以根据自己的喜好序列化成自己的格式。
+
+```shell
+map
+├── config
+├── global_desc
+├── keyframes
+├── kpts_desc
+├── map_info.bin
+├── mappoints
+└── voc_db
+```
+
 ### 4. 基于地图的视觉定位框架-重定位之粗定位
 
 ### 5. 基于地图的视觉定位框架-重定位之精定位
@@ -225,3 +262,5 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
 [hloc]()
 
 [netvlad]()
+
+[Loop Closure Detection through saliency re-identification IROS 2020](https://github.com/wh200720041/SRLCD)
