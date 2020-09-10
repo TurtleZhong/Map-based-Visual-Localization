@@ -180,6 +180,7 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
 * [LFNet](https://github.com/vcg-uvic/lf-net-release)
 * [R2D2](https://github.com/naver/r2d2)
 * [ASLFeat](https://arxiv.org/abs/2003.10071)
+* [...]()
 
 &emsp;&emsp;当有了图像，有了图像的pose之后，剩下的过程便是建图，建图又可分为在线建图和离线建图，在线建图可以使用文章开篇提到的各种slam方法，我们这里主要注重离线建图，为什么要离线建图呢？离线建图有它的优势，最终要的是获取到的图像和pose是可以人为控制的，也就意味着在精度方面有一个基本保障，这也是大多数基于激光雷达定位方法的方式，只不过地图换成了视觉地图。离线建图即恢复出2D特征点的3D位置，最小化到一个三角化算法的过程，最后整体做BA，关于三角化原理可以参考我之前写的[博客](http://www.xinliang-zhong.vip/vins_notes/#%E9%99%84%E5%BD%95c-%E4%B8%89%E8%A7%92%E5%8C%96).
 
@@ -196,7 +197,8 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
 &emsp;&emsp;[OpenMVG](http://imagine.enpc.fr/~moulonp/openMVG/): open Multiple View Geometry<br/>
 &emsp;&emsp;[OpenMVS](https://cdcseacave.github.io/openMVS/): open Multi-View Stereo reconstruction library<br/>
 &emsp;&emsp;[Pix4D](https://pix4d.com/): A unique photogrammetry software suite for drone mapping<br/>
-&emsp;&emsp;[mavmap](https://github.com/mavmap/mavmap/): Structure-from-motion for MAV image sequence analysis with photogrammetric applications
+&emsp;&emsp;[mavmap](https://github.com/mavmap/mavmap/): Structure-from-motion for MAV image sequence analysis with photogrammetric applications<br/>
+&emsp;&emsp;[...]()
 
 &emsp;&emsp;到目前位置还有一个疑问是，有些开源工具仅仅支持自己的特征，大部分是SIFT，这里不得不说SIFT的牛逼，所以在选择开源工具时需要考虑是否支持外部特征，是否支持自己的特征点匹配方式等等，这里假设提供这么多方式都解决了以上问题，根据流程我们可以得到如下稀疏的三维特征点地图如下：
 
@@ -222,15 +224,15 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
  - [ORB-SLAM2保存地图版本1](https://github.com/TUMFTM/orbslam-map-saving-extension)
  - [ORB-SLAM2保存地图版本2](https://github.com/PWN0N/ORBSLAM_MapSave)<br/>
  
-言归正传，我们来看一下作为一个通用的稀疏特征点视觉地图，它包含哪些元素：
+&emsp;&emsp;言归正传，我们来看一下作为一个通用的稀疏特征点视觉地图，它包含哪些元素：
 
-- <font color=lightgreen >关键帧</font>，包含关键帧的数目，当前关键帧的ID，父节点的ID，关键帧的生长树，关键帧的位姿，关键帧特征点位置，描述子，对应与3D地图点的索引ID，BOW向量等等元素
-- <font color=lightgreen >3D地图点</font>，地图点的数目，地图点的位置，地图点的其他信息（譬如语义等）
-- <font color=lightgreen >关键帧与3D地图点的对应关系</font>，也就是刚刚上面说到的对应索引。
+- <font color=green >关键帧</font>，包含关键帧的数目，当前关键帧的ID，父节点的ID，关键帧的生长树，关键帧的位姿，关键帧特征点位置，描述子，对应与3D地图点的索引ID，BOW向量等等元素
+- <font color=green >3D地图点</font>，地图点的数目，地图点的位置，地图点的其他信息（譬如语义等）
+- <font color=green >关键帧与3D地图点的对应关系</font>，也就是刚刚上面说到的对应索引。
 
-假设保存了这些元素之后，我们试想来了新的一帧之后，怎么去重定位出当前帧的位姿，首先对新来的帧提取局部特征点和局部描述子，然后根据局部特征计算出BOW向量，用当前帧BOW向量计算出与地图中最接近的关键帧(visual place recognition)，这时候会有候选帧，事实上如果场景变化不大，那么你已经做出了一个精度为m级别的粗略定位了，因为关键帧是保存了位姿的，所以候选关键帧和当前帧的几何信息是接近的，故它两的pose也会很接近。其次最粗暴的方法就是与最像的关键帧先做2D-2D的特征匹配，然后关键帧的特征点有些是带有3D地图点的，所以一系列的outlier剔除之后你可以得到一群2D-3D的匹配，然后粗暴的PnP方法就可以计算出当前帧的位姿。总结其过程主要有两个步骤：
-- <font color=lightgreen >1:粗定位/图像重识别/图像检索</font>，根据几何信息判断出最相似的场景。
-- <font color=lightgreen >2.精定位/PnP/BA</font>，根据2D-3D匹配恢复出相机位姿。
+&emsp;&emsp;假设保存了这些元素之后，我们试想来了新的一帧之后，怎么去重定位出当前帧的位姿，首先对新来的帧提取局部特征点和局部描述子，然后根据局部特征计算出BOW向量，用当前帧BOW向量计算出与地图中最接近的关键帧(visual place recognition)，这时候会有候选帧，事实上如果场景变化不大，那么你已经做出了一个精度为m级别的粗略定位了，因为关键帧是保存了位姿的，所以候选关键帧和当前帧的几何信息是接近的，故它两的pose也会很接近。其次最粗暴的方法就是与最像的关键帧先做2D-2D的特征匹配，然后关键帧的特征点有些是带有3D地图点的，所以一系列的outlier剔除之后你可以得到一群2D-3D的匹配，然后粗暴的PnP方法就可以计算出当前帧的位姿。总结其过程主要有两个步骤：
+- <font color=green >1:粗定位/图像重识别/图像检索</font>，根据几何信息判断出最相似的场景。
+- <font color=green >2.精定位/PnP/BA</font>，根据2D-3D匹配恢复出相机位姿。
 
 所以我们可以将地图元素像这样存放，当然你也可以根据自己的喜好序列化成自己的格式。
 
@@ -247,7 +249,48 @@ map
 
 ### 4. 基于地图的视觉定位框架-重定位之粗定位
 
+
+&emsp;&emsp;粗定位很好理解，又可以理解为回环检测的第一步，试图寻找当前帧与历史帧最像的候选帧，然后进行粗定位，方法又很多种，这里将其分为传统方法和基于深度学习的方法。由于当前输入数据和已知地图（在使用之前就建立好的）之间的视图、照明、天气和场景动态等因素变化，导致这一数据关联问题变得尤其复杂。在这里，我们只针对常用的方法进行讲解，具体使用要case by case. 下图表示了图像检索的样例：
+
+<p align="center">
+  <img src="images/global_retrivial_1.png" width="100%"/>
+  <br><br/>
+  <img src="images/global_retrivial_3.png" width="100%"/>
+</p>
+
+&emsp;&emsp;传统方法来讲，这里讲最经典最经典的几个方法：
+- [VLAD] - https://github.com/jorjasso/VLAD
+- [DBoW2] - https://github.com/dorian3d/DBoW2
+- [libhaloc]- https://github.com/srv/libhaloc
+- [HBST] - https://gitlab.com/srrg-software/srrg_hbst
+- [iBow] - https://github.com/emiliofidalgo/ibow-lcd
+- [...]()
+
+无论以何种方式实现，其输入是一张图，输出是database中的query对象。
+
+&emsp;&emsp;当然以神经网络对图像的强大表达能力，近些年深度学习的方法比较流行，核心思路应该理解为对图像提取特征，这种特征能够描述这个场景，相似场景特征之间的距离要近，不同场景对应的特征向量的距离应该尽量远，这样才有区分度，这里也列举近些年一些基于深度学习的算法。
+
+- [NetVLAD] - https://github.com/Relja/netvlad
+- [DIR] - https://github.com/almazan/deep-image-retrieval
+- [GeM,DAME] - https://github.com/scape-research/DAME-WEB
+- [DELF] - https://github.com/tensorflow/models/tree/master/research/delf
+- [HF-NET] - https://github.com/ethz-asl/hfnet
+- [UR2KID] - https://arxiv.org/abs/2001.07252
+- [...]()
+
+&emsp;&emsp;上述DL的方法基本上输入是图像，输出是一个N(1024/2048/4096...)维度的向量，即描述子。如果两张图很接近，那么其描述子之间的距离会比较接近，反之则比较距离较远，另外近年也有与语义信息结合的工作，但目前（2020.09）还没有看到比较好的开源工作。
+
+&emsp;&emsp;这里推荐一个CVPR2017的一个Tutorial,需科学上网：<br/>
+[Tutorial : Large-Scale Visual Place Recognition and Image-Based Localization Part 1](https://www.youtube.com/watch?v=GDMLjzbEth8)<br/>
+[Tutorial : Large-Scale Visual Place Recognition and Image-Based Localization Part 2](https://www.youtube.com/watch?v=947W99gAvQ8)<br/>
+&emsp;&emsp;如果说像把上面的工作集成到自己的SLAM系统或者框架中，一般还需要考虑实时性以及是否需要模型加速或者说转换成C++的问题，可以从NetVLAD入手，譬如大佬们把它修改成了tensorflow版本的[netvlat_tf](https://github.com/uzh-rpg/netvlad_tf_open). 当然针对上面的hfnet工作我也简单对[hfnet](https://github.com/ethz-asl/hfnet)改了一个[hfnet_ros](https://github.com/TurtleZhong/hfnet_ros),提供了docker配置，如果有兴趣可以玩一下.
+
+
 ### 5. 基于地图的视觉定位框架-重定位之精定位
+
+TODO. feature selection
+TODO. feature matching
+TODO. PnP
 
 ### 6. 基于地图的视觉定位框架-Others
 
