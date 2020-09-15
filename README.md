@@ -15,11 +15,13 @@ A general framework for map-based visual localization. It contains
 
 I will release some related papers and An introduction of the work in the map based visual localization. I guess the introduction will writen in Chinese first. So coming soon, Let's do it.
 
+![Stargazers over time](https://starchart.cc/TurtleZhong/Map-based-Visual-Localization.svg)
+
 # **随缘持续更新中!!**
 
 <p align="left">
   <a href="https://github.com/TurtleZhong/Map-based-Visual-Localization/wiki"><img src="https://img.shields.io/badge/wiki-click%20here-brightgreen" width="20%"/></a>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=TurtleZhong.Map-based-Visual-Localization.visitor-badge"height="20">
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=TurtleZhong.Map-based-Visual-Localization.visitor-badge"height="25">
 </p>
 
 
@@ -198,6 +200,7 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
 &emsp;&emsp;[OpenMVS](https://cdcseacave.github.io/openMVS/): open Multi-View Stereo reconstruction library<br/>
 &emsp;&emsp;[Pix4D](https://pix4d.com/): A unique photogrammetry software suite for drone mapping<br/>
 &emsp;&emsp;[mavmap](https://github.com/mavmap/mavmap/): Structure-from-motion for MAV image sequence analysis with photogrammetric applications<br/>
+&emsp;&emsp;[TheiaSfM](https://github.com/sweeneychris/TheiaSfM):Theia is an end-to-end structure-from-motion library<br/>
 &emsp;&emsp;[...]()
 
 &emsp;&emsp;到目前位置还有一个疑问是，有些开源工具仅仅支持自己的特征，大部分是SIFT，这里不得不说SIFT的牛逼，所以在选择开源工具时需要考虑是否支持外部特征，是否支持自己的特征点匹配方式等等，这里假设提供这么多方式都解决了以上问题，根据流程我们可以得到如下稀疏的三维特征点地图如下：
@@ -283,14 +286,56 @@ map
 &emsp;&emsp;这里推荐一个CVPR2017的一个Tutorial,需科学上网：<br/>
 [Tutorial : Large-Scale Visual Place Recognition and Image-Based Localization Part 1](https://www.youtube.com/watch?v=GDMLjzbEth8)<br/>
 [Tutorial : Large-Scale Visual Place Recognition and Image-Based Localization Part 2](https://www.youtube.com/watch?v=947W99gAvQ8)<br/>
-&emsp;&emsp;如果说像把上面的工作集成到自己的SLAM系统或者框架中，一般还需要考虑实时性以及是否需要模型加速或者说转换成C++的问题，可以从NetVLAD入手，譬如大佬们把它修改成了tensorflow版本的[netvlat_tf](https://github.com/uzh-rpg/netvlad_tf_open). 当然针对上面的hfnet工作我也简单对[hfnet](https://github.com/ethz-asl/hfnet)改了一个[hfnet_ros](https://github.com/TurtleZhong/hfnet_ros),提供了docker配置，如果有兴趣可以玩一下.
+&emsp;&emsp;如果说像把上面的工作集成到自己的SLAM系统或者框架中，一般还需要考虑实时性以及是否需要模型加速或者说转换成C++的问题，可以从NetVLAD入手，譬如大佬们把它修改成了tensorflow版本的[netvlat_tf](https://github.com/uzh-rpg/netvlad_tf_open). 当然针对上面的hfnet工作我也简单对[hfnet](https://github.com/ethz-asl/hfnet)改了一个[hfnet_ros](https://github.com/TurtleZhong/hfnet_ros),提供了docker配置，如果有兴趣可以玩一下. 网络实际输出三个东西，但这里只显示特征点如下：<br/>
+<p align="center">
+  <img src="images/hfnet-1660s-demo.gif" width="100%"/>
+  <br>
+</p>
 
 
 ### 5. 基于地图的视觉定位框架-重定位之精定位
 
-TODO. feature selection
-TODO. feature matching
-TODO. PnP
+
+
+&emsp;&emsp;总结性的来讲，精定位无非干一件事情，想尽一切办法找到可靠的3D-2D的匹配对。我们将精定位部分分为三个大部分，特征点和描述子的选择，特征点之间的匹配以及位姿恢复。<br/>
+<table><tr>
+<td><img src=images/image-matching.gif border=0></td>
+<td><img src=images/ch5-visual-localization.gif border=0></td>
+&emsp;&emsp;</tr></table>
+
+&emsp;&emsp;首先来看特征点和描述子之间的选择，其实从SIFT开始，各种个样的hand-craft描述子和特征点不断兴起，大多是在保证精度的同时加快特征点和描述子的提取速度，这些方法也都大多被集成到opencv中，调用起来也很方便，另外近些年基于DL的特征提取方法不断兴起，也涌现了很多优秀的特征提取和描述子算法，它们的出现也都集中在解决精度，尺度变化大，运动模糊，光照变化大，旋转变化大，环境变化大等等还能保证精度的问题。
+
+&emsp;&emsp;这里推荐CVPR2020的一个Workshop，[CVPR2020: Image Matching Workshop](https://www.youtube.com/watch?v=UQ4uJX7UDB8). 内容还是比较硬核的，讲述了图像特征点和匹配的一些方法，大家可以仔细观看视频并学习。<br/>
+&emsp;&emsp;特征点选择和匹配包括姿态恢复部分其实都有很多工程技巧，另外因为这个我觉得从特征点入门slam的同学来讲也并不陌生，所以就不那么多废话，因为每年都会涌现十分多非常优秀的特征点算法以及特征点描述子，同时还有一些匹配算法，以及一些端到端的匹配，姿态恢复算法等等，这些都是参考；从工程角度来讲，我希望定义好输入输出，输入就是未匹配好的特征点及其对应的描述子，当然有些可能要输入图像，输出则是匹配好的2D特征点对，其中算法你可以换成开源的其他任意算法，至于怎么选择，这里提供了Google出品的一篇论文[Image Matching Across Wide Baselines: From Paper to Practice](https://arxiv.org/abs/2003.01587)的结果：
+<p align="center">
+  <img src="images/google-image-matching.png" width="100%"/>
+  <br>
+</p>
+&emsp;&emsp;事实上仅仅看排名的话在google的数据集上也并非越新的算法其效果越好，匹配有一部分重要的原因我个人感觉描述子比较重要，特征的区分度高，描述能力强的自然效果好，所以其实排名靠前的也不乏传统特征点+深度学习描述子的组合，这也给大家提供了一个思路，就是说根据你自己的算法需求去解耦整个框架，可以用传统的用传统，想上DL上DL，想整个端到端就整个端到端，这些都是ok的。
+
+&emsp;&emsp;对于传统算法，github上又一个不错的项目，对opencv中支持的各大detector和descriptor以及matching method都做了对比测试，包括特征提取匹配的耗时等等，不过看命名像是Udacity的课程，其github项目名称为 [SFND_2D_Feature_Tracking](https://github.com/godloveliang/SFND_2D_Feature_Tracking)
+
+&emsp;&emsp;对于DL方法，我在第二章提到的，大家都可以去对于的github上去做测试。
+* [Hardnet](https://github.com/DagnyT/hardnet.git)
+* [HardnetAmos](https://github.com/pultarmi/HardNet_MultiDataset)
+* [GeoDesc](https://github.com/lzx551402/geodesc.git)
+* [SOSNet](https://github.com/yuruntian/SOSNet.git)
+* [L2Net](https://github.com/yuruntian/L2-Net)
+* [Log-polar descriptor](https://github.com/DagnyT/hardnet_ptn.git)
+* [Superpoint](https://github.com/MagicLeapResearch/SuperPointPretrainedNetwork)
+* [D2-Net](https://github.com/mihaidusmanu/d2-net)
+* [DELF](https://github.com/tensorflow/models/blob/master/research/delf/INSTALL_INSTRUCTIONS.md)
+* [Contextdesc](https://github.com/lzx551402/contextdesc)
+* [LFNet](https://github.com/vcg-uvic/lf-net-release)
+* [R2D2](https://github.com/naver/r2d2)
+* [ASLFeat](https://arxiv.org/abs/2003.10071)
+
+特征匹配: 暴力匹配，knn-based.
+
+TODO. feature selection<br/>
+TODO. feature matching<br/>
+TODO. PnP/BA<br/>
+
 
 ### 6. 基于地图的视觉定位框架-Others
 
@@ -307,3 +352,5 @@ TODO. PnP
 [netvlad]()
 
 [Loop Closure Detection through saliency re-identification IROS 2020](https://github.com/wh200720041/SRLCD)
+
+[Image Matching Across Wide Baselines: From Paper to Practice](https://arxiv.org/abs/2003.01587)
