@@ -27,7 +27,9 @@ I will release some related papers and An introduction of the work in the map ba
 
 ![progress](https://img.shields.io/badge/progress-25%25-brightgreen) ![star](https://img.shields.io/badge/Star%20me-if%20it%20helps%20you%EF%BC%81-green.svg)
 
-- 2020.09.04 添加文章结构
+- [x] 2020.09.19 添加了微小贡献的github repo链接
+- [x] 2020.09.19 添加了第五章的部分内容
+- [x] 2020.09.04 添加文章结构
 
 [TOC]
 
@@ -52,7 +54,7 @@ a）基本上支持绝大部分SLAM系统的输出轨迹进行视觉地图构建
 
 b）支持传统特征如SIFT以及深度学习特征如SuperPoint等众多特征的地图构建，但问题在于轨迹的来源是各式各样的，我甚至可以使用rtk或者激光雷达作为真值，但实际重定位使用的时候必须要使用与构建视觉地图的特征一致，不然是会定位失败的；
 
-c）整个框架在线定位基本基于C++开发，可以方便集成到ROS，所以也许会提供一个提取深度学习特征点和描述子网络，模型本身不会修改，只是改成cpp版本，便于后续开发，不然ros的python2环境和现在各大网络的python3环境很烦；
+c）整个框架在线定位基本基于C++开发，可以方便集成到ROS，所以也许会提供一个提取深度学习特征点和描述子网络，模型本身不会修改，只是改成cpp版本，便于后续开发，不然ros的python2环境和现在各大网络的python3环境很烦；一个可用的版本在[这里](https://github.com/TurtleZhong/hfnet_ros).
 
 d）将SFM重建之后的元素分解整合成视觉定位所依赖的元素，譬如关键帧，特征点，描述子，3D点等等；
 
@@ -298,7 +300,7 @@ map
 
 
 &emsp;&emsp;总结性的来讲，精定位无非干一件事情，想尽一切办法找到可靠的3D-2D的匹配对。我们将精定位部分分为三个大部分，特征点和描述子的选择，特征点之间的匹配以及位姿恢复。<br/>
-<table><tr>
+<table align="center"><tr>
 <td><img src=images/image-matching.gif border=0></td>
 <td><img src=images/ch5-visual-localization.gif border=0></td>
 &emsp;&emsp;</tr></table>
@@ -330,12 +332,32 @@ map
 * [R2D2](https://github.com/naver/r2d2)
 * [ASLFeat](https://arxiv.org/abs/2003.10071)
 
-特征匹配: 暴力匹配，knn-based.
+&emsp;&emsp;到目前位置，我们选择了一套精定位的方法，同时我们也选择了用于粗定位的方法即特征点和描述子，当然特征匹配这一块是一个单独的问题，其实有很多特征点的匹配方法，但常规来讲，我们一般来讲常用的有暴力匹配和knn-based匹配，另外一些cross-check等等以及一些加速匹配的方法都可以用上，只要记住整个系统的输入输出即可。之后便是PnP求解问题，或者可以推广到BA问题，假设前期工作做的好，那基本上来讲直接PnP的精度也不会太差。
 
-TODO. feature selection<br/>
-TODO. feature matching<br/>
-TODO. PnP/BA<br/>
+&emsp;&emsp;实质上，如果说到这里你还不明白为什么要花那么多时间讲挑选特征点，建图，定位，等等，都是有道理的，在这里我也想在声明一下大家都说自己是做SLAM的，其实本质上有可能是不一样的，不过大同小异，侧重点不一样，从我的角度来讲，定位是定位，建图是建图，SLAM（同时定位建图是同时定位与建图）：
 
+- **相对定位问题：**<br/>
+TODO
+- **绝对定位问题：**<br/>
+TODO
+- **建图问题：**<br/>
+TODO
+- **SLAM问题：**<br/>
+TODO
+
+### 6. 基于地图的视觉定位框架-流程总结
+
+&emsp;&emsp;首先我们来看一个之前说的框架加载地图到单张图像重定位的一个效果，视频地址在[Youtube](https://youtu.be/qG5FTo149qA),其次我们再回顾一下各个步骤都干了些什么事情。
+
+<p align="center">
+  <img ref="https://youtu.be/qG5FTo149qA" src="images/single-image-loc-demo.png" width="100%"/>
+</p>
+
+//TODO
+- 获取图像以及姿态
+- 构建视觉地图
+- 加载地图
+- 视觉重定位
 
 ### 6. 基于地图的视觉定位框架-Others
 
