@@ -52,7 +52,7 @@ d）会涉及到slam系统，重定位，图像检索，特征点提取及匹配
 
 a）基本上支持绝大部分SLAM系统的输出轨迹进行视觉地图构建，当然这是离线的，一方面，有些slam系统的历史轨迹是会经过优化的，所以这部分是拿最终的轨迹和图像来进行离线选择pose和image进行SFM构建地图的；
 
-b）支持传统特征如SIFT以及深度学习特征如SuperPoint等众多特征的地图构建，但问题在于轨迹的来源是各式各样的，我甚至可以使用rtk或者激光雷达作为真值，但实际重定位使用的时候必须要使用与构建视觉地图的特征一致，不然是会定位失败的；
+b）支持传统特征如SIFT以及深度学习特征如SuperPoint等众多特征的地图构建，但问题在于轨迹的来源是各式各样的，我甚至可以使用rtk或者激光雷达作为真值，但实际重定位使用的时候必须要使用与构建视觉地图的特征一致，不然是会定位失败的；这里建议参考一些开源SFM的文档，hack它们也不算难。
 
 c）整个框架在线定位基本基于C++开发，可以方便集成到ROS，所以也许会提供一个提取深度学习特征点和描述子网络，模型本身不会修改，只是改成cpp版本，便于后续开发，不然ros的python2环境和现在各大网络的python3环境很烦；一个可用的版本在[这里](https://github.com/TurtleZhong/hfnet_ros).
 
@@ -337,13 +337,13 @@ map
 &emsp;&emsp;实质上，如果说到这里你还不明白为什么要花那么多时间讲挑选特征点，建图，定位，等等，都是有道理的，在这里我也想在声明一下大家都说自己是做SLAM的，其实本质上有可能是不一样的，不过大同小异，侧重点不一样，从我的角度来讲，定位是定位，建图是建图，SLAM（同时定位建图是同时定位与建图）：
 
 - **相对定位问题：**<br/>
-TODO
+&emsp;&emsp;我理解的相对定位问题是不需要知道绝对坐标系的，而且是可以理解为可以传感器每次上电的位置不同，同一个地方的定位位置也不相同，典型的结果如轮速计，各大VIO等等
 - **绝对定位问题：**<br/>
-TODO
+&emsp;&emsp;这个跟相对地位不一样，可以理解为定位结果每次都是在同一个坐标系下的，譬如不需要事先建地图的差分GPS，或者说需要事先建立用于定位的高精度地图，譬如ORB-SLAM2的地图保存，譬如自动驾驶常常说的高精度地图等等。总的来说定位问题输出的是机器人位姿的最大似然估计。
 - **建图问题：**<br/>
-TODO
+&emsp;&emsp;建图问题又分为有pose和无pose的情况，但总而言之输出的是地图的最大似然估计，像本项目的做法就是用比较准确的pose去做地图恢复问题。
 - **SLAM问题：**<br/>
-TODO
+&emsp;&emsp;可以理解为，事先什么都是不知道的，包括pose和map，知道的只有传感器的信息，根据传感器的信息推断出pose和map的信息。
 
 ### 6. 基于地图的视觉定位框架-流程总结
 
@@ -353,17 +353,16 @@ TODO
   <img ref="https://youtu.be/qG5FTo149qA" src="images/single-image-loc-demo.png" width="100%"/>
 </p>
 
-//TODO
 - 获取图像以及姿态
 - 构建视觉地图
 - 加载地图
 - 视觉重定位
 
-### 6. 基于地图的视觉定位框架-Others
+### 7. 基于地图的视觉定位框架-融合
 
-### 7. References
+### 8. References
 
-**!!这里暂时只提供一些相关的论文，暂时不做分类!!**
+
 
 [DH3D: Deep Hierarchical 3D Descriptors for Robust Large-Scale 6DOF Relocalization](https://github.com/JuanDuGit/DH3D)
 
@@ -376,3 +375,5 @@ TODO
 [Loop Closure Detection through saliency re-identification IROS 2020](https://github.com/wh200720041/SRLCD)
 
 [Image Matching Across Wide Baselines: From Paper to Practice](https://arxiv.org/abs/2003.01587)
+
+[ECCV 2020] [Learning Feature Descriptors using Camera Pose Supervision](https://qianqianwang68.github.io/CAPS/)
