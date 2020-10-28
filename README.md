@@ -25,7 +25,7 @@ I will release some related papers and An introduction of the work in the map ba
 </p>
 
 
-![progress](https://img.shields.io/badge/progress-25%25-brightgreen) ![star](https://img.shields.io/badge/Star%20me-if%20it%20helps%20you%EF%BC%81-green.svg)
+![progress](https://img.shields.io/badge/progress-60%25-brightgreen) ![star](https://img.shields.io/badge/Star%20me-if%20it%20helps%20you%EF%BC%81-green.svg)
 
 - [x] 2020.09.19 添加了微小贡献的github repo链接
 - [x] 2020.09.19 添加了第五章的部分内容
@@ -228,7 +228,7 @@ g）代码不一定开源，但会提供思路，会提供相关论文，这些�
  其目的是让读者自己实现地图的保存与加载功能，事实上这也是大多数SLAM/VO/VIO系统的问题，你想保存地图？那是不可能的。这个保存地图其实在16年就已经有人写出来了，并且我们当时也使用过，现在github上也有很多版本，这里给大家推荐两个版本：<br/>
  - [ORB-SLAM2保存地图版本1](https://github.com/TUMFTM/orbslam-map-saving-extension)
  - [ORB-SLAM2保存地图版本2](https://github.com/PWN0N/ORBSLAM_MapSave)<br/>
- 
+
 &emsp;&emsp;言归正传，我们来看一下作为一个通用的稀疏特征点视觉地图，它包含哪些元素：
 
 - <font color=green >关键帧</font>，包含关键帧的数目，当前关键帧的ID，父节点的ID，关键帧的生长树，关键帧的位姿，关键帧特征点位置，描述子，对应与3D地图点的索引ID，BOW向量等等元素
@@ -353,6 +353,8 @@ map
   <img ref="https://youtu.be/qG5FTo149qA" src="images/single-image-loc-demo.png" width="100%"/>
 </p>
 
+<iframe src="//player.bilibili.com/player.html?aid=842567889&bvid=BV1M54y1r7gz&cid=250223772&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+
 - 获取图像以及姿态
 - 构建视觉地图
 - 加载地图
@@ -377,3 +379,8 @@ map
 [Image Matching Across Wide Baselines: From Paper to Practice](https://arxiv.org/abs/2003.01587)
 
 [ECCV 2020] [Learning Feature Descriptors using Camera Pose Supervision](https://qianqianwang68.github.io/CAPS/)
+
+<!-- for test -->
+
+
+
